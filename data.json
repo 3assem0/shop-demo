@@ -1,11 +1,6 @@
 {
   "products": [
     {
-      "name": "Smart Fitness Watch",
-      "description": "Track your health and fitness with GPS, heart rate monitoring, and waterproof design. Compatible with iOS and Android.",
-      "price": "$199.99"
-    },
-    {
       "name": "Portable Laptop Stand",
       "description": "Ergonomic aluminum laptop stand that's lightweight and adjustable. Improve your posture while working from anywhere.",
       "price": "$39.99"
@@ -16,5 +11,5 @@
       "price": "250"
     }
   ],
-  "lastUpdated": "2025-09-04T19:19:35.557Z"
+  "lastUpdated": "2025-09-04T19:22:37.384Z"
 }
