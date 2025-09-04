@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Products Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .admin-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 30px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #7f8c8d;
+            border: 2px solid #bdc3c7;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(231, 76, 60, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .message {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-weight: 500;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            border: 2px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            border: 2px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .message.info {
+            background: #cce7ff;
+            border: 2px solid #99d6ff;
+            color: #0c5460;
+        }
+
+        .products-list {
+            margin-top: 30px;
+        }
+
+        .product-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .product-item:hover {
+            border-color: #3498db;
+            transform: translateY(-2px);
+        }
+
+        .product-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .product-name {
+            font-weight: 600;
+            color: #2c3e50;
+            flex-grow: 1;
+        }
+
+        .product-price {
+            font-weight: 700;
+            color: #3498db;
+        }
+
+        .product-description {
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .back-link {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .back-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .admin-panel {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .product-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .product-actions {
+                justify-content: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚙️ Admin Panel</h1>
+            <p>Manage your products inventory</p>
+        </div>
+
+        <a href="index.html" class="back-link">← Back to Store</a>
+
+        <div class="admin-panel">
+            <div class="form-section">
+                <h2>🆕 Add New Product</h2>
+                <form id="product-form">
+                    <div class="form-group">
+                        <label for="product-name">Product Name *</label>
+                        <input type="text" id="product-name" name="name" required placeholder="Enter product name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product-description">Description</label>
+                        <textarea id="product-description" name="description" placeholder="Enter product description"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product-price">Price *</label>
+                        <input type="text" id="product-price" name="price" required placeholder="e.g., $29.99">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" id="submit-btn">
+                        <span id="submit-text">Add Product</span>
+                        <span id="submit-loading" class="loading" style="display: none;"></span>
+                    </button>
+                    
+                    <button type="button" class="btn btn-secondary" onclick="clearForm()">
+                        Clear Form
+                    </button>
+                </form>
+            </div>
+
+            <div id="message" class="message"></div>
+
+            <div class="form-section">
+                <h2>📦 Current Products</h2>
+                <button class="btn btn-secondary" onclick="loadProducts()" id="refresh-btn">
+                    🔄 Refresh Products
+                </button>
+                <div id="products-list" class="products-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentProducts = [];
+        let editingIndex = -1;
+
+        // Form submission handler
+        document.getElementById('product-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submit-btn');
+            const submitText = document.getElementById('submit-text');
+            const submitLoading = document.getElementById('submit-loading');
+            
+            // Get form data
+            const formData = new FormData(this);
+            const productData = {
+                name: formData.get('name').trim(),
+                description: formData.get('description').trim(),
+                price: formData.get('price').trim()
+            };
+            
+            // Basic validation
+            if (!productData.name || !productData.price) {
+                showMessage('Please fill in all required fields.', 'error');
+                return;
+            }
+            
+            try {
+                // Show loading state
+                submitBtn.disabled = true;
+                submitText.style.display = 'none';
+                submitLoading.style.display = 'inline-block';
+                
+                let updatedProducts;
+                if (editingIndex >= 0) {
+                    // Update existing product
+                    updatedProducts = [...currentProducts];
+                    updatedProducts[editingIndex] = productData;
+                    submitText.textContent = 'Update Product';
+                } else {
+                    // Add new product
+                    updatedProducts = [...currentProducts, productData];
+                }
+                
+                const newData = {
+                    products: updatedProducts,
+                    lastUpdated: new Date().toISOString()
+                };
+                
+                // Send to serverless function
+                const response = await fetch('/api/update-json', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ newData })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showMessage(
+                        editingIndex >= 0 ? 'Product updated successfully!' : 'Product added successfully!', 
+                        'success'
+                    );
+                    currentProducts = updatedProducts;
+                    displayProducts();
+                    clearForm();
+                } else {
+                    throw new Error(result.error || 'Failed to update products');
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage(`Error: ${error.message}`, 'error');
+            } finally {
+                // Reset button state
+                submitBtn.disabled = false;
+                submitText.style.display = 'inline';
+                submitLoading.style.display = 'none';
+                if (editingIndex < 0) {
+                    submitText.textContent = 'Add Product';
+                }
+            }
+        });
+
+        async function loadProducts() {
+            const refreshBtn = document.getElementById('refresh-btn');
+            const originalText = refreshBtn.textContent;
+            
+            try {
+                refreshBtn.disabled = true;
+                refreshBtn.textContent = '🔄 Loading...';
+                
+                // Fetch current products from our API endpoint
+                const response = await fetch('/api/get-products');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    currentProducts = data.products || [];
+                    displayProducts();
+                    showMessage('Products loaded successfully!', 'success');
+                } else {
+                    // If file doesn't exist, start with empty products
+                    currentProducts = [];
+                    displayProducts();
+                    showMessage('No products file found. Starting with empty list.', 'info');
+                }
+                
+            } catch (error) {
+                console.error('Error loading products:', error);
+                showMessage('Error loading products. Starting with empty list.', 'error');
+                currentProducts = [];
+                displayProducts();
+            } finally {
+                refreshBtn.disabled = false;
+                refreshBtn.textContent = originalText;
+            }
+        }
+
+        function displayProducts() {
+            const container = document.getElementById('products-list');
+            
+            if (currentProducts.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #7f8c8d; padding: 20px;">No products added yet.</p>';
+                return;
+            }
+            
+            container.innerHTML = currentProducts.map((product, index) => `
+                <div class="product-item">
+                    <div class="product-header">
+                        <span class="product-name">${escapeHtml(product.name)}</span>
+                        <span class="product-price">${escapeHtml(product.price)}</span>
+                    </div>
+                    ${product.description ? `<div class="product-description">${escapeHtml(product.description)}</div>` : ''}
+                    <div class="product-actions">
+                        <button class="btn btn-secondary" onclick="editProduct(${index})">
+                            ✏️ Edit
+                        </button>
+                        <button class="btn btn-danger" onclick="deleteProduct(${index})">
+                            🗑️ Delete
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function editProduct(index) {
+            const product = currentProducts[index];
+            document.getElementById('product-name').value = product.name;
+            document.getElementById('product-description').value = product.description || '';
+            document.getElementById('product-price').value = product.price;
+            
+            editingIndex = index;
+            document.getElementById('submit-text').textContent = 'Update Product';
+            showMessage('Editing product. Make your changes and click Update.', 'info');
+            
+            // Scroll to form
+            document.getElementById('product-form').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        async function deleteProduct(index) {
+            if (!confirm('Are you sure you want to delete this product?')) {
+                return;
+            }
+            
+            try {
+                const updatedProducts = currentProducts.filter((_, i) => i !== index);
+                const newData = {
+                    products: updatedProducts,
+                    lastUpdated: new Date().toISOString()
+                };
+                
+                const response = await fetch('/api/update-json', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ newData })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showMessage('Product deleted successfully!', 'success');
+                    currentProducts = updatedProducts;
+                    displayProducts();
+                    
+                    // If we were editing the deleted item, clear the form
+                    if (editingIndex === index) {
+                        clearForm();
+                    } else if (editingIndex > index) {
+                        editingIndex--;
+                    }
+                } else {
+                    throw new Error(result.error || 'Failed to delete product');
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage(`Error deleting product: ${error.message}`, 'error');
+            }
+        }
+
+        function clearForm() {
+            document.getElementById('product-form').reset();
+            editingIndex = -1;
+            document.getElementById('submit-text').textContent = 'Add Product';
+            hideMessage();
+        }
+
+        function showMessage(text, type) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = text;
+            messageEl.className = `message ${type}`;
+            messageEl.style.display = 'block';
+            
+            // Auto-hide success messages after 5 seconds
+            if (type === 'success') {
+                setTimeout(hideMessage, 5000);
+            }
+        }
+
+        function hideMessage() {
+            document.getElementById('message').style.display = 'none';
+        }
+
+        function escapeHtml(text) {
+            if (typeof text !== 'string') return text;
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+        }
+
+        // Load products when page loads
+        document.addEventListener('DOMContentLoaded', loadProducts);
+    </script>
+</body>
+</html>
