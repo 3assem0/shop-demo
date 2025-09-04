@@ -526,7 +526,14 @@
             }
             
             try {
+                // Update UI immediately for instant feedback
                 const updatedProducts = currentProducts.filter((_, i) => i !== index);
+                currentProducts = updatedProducts;
+                displayProducts();
+                
+                // Show immediate feedback
+                showMessage('Deleting product...', 'info');
+                
                 const newData = {
                     products: updatedProducts,
                     lastUpdated: new Date().toISOString()
@@ -544,8 +551,6 @@
                 
                 if (response.ok) {
                     showMessage('Product deleted successfully!', 'success');
-                    currentProducts = updatedProducts;
-                    displayProducts();
                     
                     // If we were editing the deleted item, clear the form
                     if (editingIndex === index) {
@@ -554,6 +559,10 @@
                         editingIndex--;
                     }
                 } else {
+                    // If server update failed, revert the UI changes
+                    currentProducts = [...currentProducts];
+                    currentProducts.splice(index, 0, currentProducts[index]);
+                    displayProducts();
                     throw new Error(result.error || 'Failed to delete product');
                 }
                 
