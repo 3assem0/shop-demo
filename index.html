@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-color: white;
             min-height: 100vh;
             padding: 20px;
         }
@@ -25,7 +25,7 @@
 
         .header {
             text-align: center;
-            color: white;
+            color: black;
             margin-bottom: 40px;
         }
 
@@ -81,7 +81,7 @@
         .product-price {
             font-size: 1.8rem;
             font-weight: 700;
-            color: #667eea;
+            color: #27cf30;
             text-align: center;
             margin-bottom: 20px;
         }
@@ -105,13 +105,13 @@
         }
 
         .btn-primary {
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            background: tomato;
             color: white;
         }
 
         .btn-primary:hover {
             transform: scale(1.05);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 10px 20px rgba(216, 51, 18, 0.3);
         }
 
         .btn-secondary {
@@ -121,7 +121,7 @@
         }
 
         .btn-secondary:hover {
-            background: #667eea;
+            background: #294ce7;
             color: white;
         }
 
@@ -263,7 +263,7 @@
                 productCard.innerHTML = `
                     <h3 class="product-name">${escapeHtml(product.name || 'Unnamed Product')}</h3>
                     <p class="product-description">${escapeHtml(product.description || 'No description available.')}</p>
-                    <div class="product-price">${escapeHtml(product.price || 'Price not available')}</div>
+                    <div class="product-price">${escapeHtml($product.price || 'Price not available')}</div>
                     <div class="product-actions">
                         <button class="btn btn-primary" onclick="buyProduct('${escapeHtml(product.name)}')">
                             Buy Now

@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            background-color: whitesmoke;
             min-height: 100vh;
             padding: 20px;
             color: #333;
@@ -124,12 +124,12 @@
 
         .btn-secondary {
             background: transparent;
-            color: #7f8c8d;
+            color: #2a2b2b;
             border: 2px solid #bdc3c7;
         }
 
         .btn-secondary:hover {
-            background: #7f8c8d;
+            background-color:rgb(25, 91, 246) ;
             color: white;
         }
 
@@ -296,6 +296,7 @@
             
             .header h1 {
                 font-size: 2rem;
+                color: black;
             }
             
             .product-header {
@@ -312,7 +313,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>⚙️ Admin Panel</h1>
+            <h1>Admin Panel</h1>
             <p>Manage your products inventory</p>
         </div>
 
@@ -320,7 +321,7 @@
 
         <div class="admin-panel" style="display: none;">
             <div class="form-section">
-                <h2>🆕 Add New Product</h2>
+                <h2>Add New Product</h2>
                 <form id="product-form">
                     <div class="form-group">
                         <label for="product-name">Product Name *</label>
@@ -334,7 +335,7 @@
                     
                     <div class="form-group">
                         <label for="product-price">Price *</label>
-                        <input type="text" id="product-price" name="price" required placeholder="e.g., $29.99">
+                        <input type="number" id="product-price" name="price" required placeholder="e.g., $29.99">
                     </div>
                     
                     <button type="submit" class="btn btn-primary" id="submit-btn">
@@ -491,7 +492,7 @@
                 <div class="product-item">
                     <div class="product-header">
                         <span class="product-name">${escapeHtml(product.name)}</span>
-                        <span class="product-price">${escapeHtml(product.price)}</span>
+                        <span class="product-price">${escapeHtml($product.price)}</span>
                     </div>
                     ${product.description ? `<div class="product-description">${escapeHtml(product.description)}</div>` : ''}
                     <div class="product-actions">
