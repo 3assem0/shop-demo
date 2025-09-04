@@ -1,5 +1,5 @@
 // api/update-json.js
-// Vercel serverless function to update data.json in GitHub repository
+// DEBUG VERSION - Vercel serverless function to update data.json in GitHub repository
 
 export default async function handler(req, res) {
     // Set CORS headers
@@ -19,15 +19,29 @@ export default async function handler(req, res) {
     }
 
     try {
+        // DEBUG: Log environment variables (without exposing token)
+        console.log('Environment check:', {
+            hasToken: !!process.env.GITHUB_TOKEN,
+            tokenLength: process.env.GITHUB_TOKEN ? process.env.GITHUB_TOKEN.length : 0,
+            username: process.env.GITHUB_USERNAME,
+            repo: process.env.GITHUB_REPO,
+            branch: process.env.GITHUB_BRANCH
+        });
+
         // Validate environment variables
         const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
         const GITHUB_USERNAME = process.env.GITHUB_USERNAME || 'your-username';
         const GITHUB_REPO = process.env.GITHUB_REPO || 'your-repo-name';
         const GITHUB_BRANCH = process.env.GITHUB_BRANCH || 'main';
 
+        // More detailed error for missing token
         if (!GITHUB_TOKEN) {
             return res.status(500).json({ 
-                error: 'GITHUB_TOKEN environment variable is not set' 
+                error: 'GITHUB_TOKEN environment variable is not set',
+                debug: {
+                    allEnvVars: Object.keys(process.env).filter(key => key.startsWith('GITHUB')),
+                    nodeEnv: process.env.NODE_ENV
+                }
             });
         }
 
@@ -46,6 +60,8 @@ export default async function handler(req, res) {
             'User-Agent': 'Vercel-Function'
         };
 
+        console.log('Making request to:', `${apiBase}/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/${filePath}`);
+
         // Step 1: Get current file (if it exists) to get the SHA
         let currentSha = null;
         try {
@@ -54,13 +70,21 @@ export default async function handler(req, res) {
                 { headers }
             );
             
+            console.log('Get current file response:', getCurrentFile.status, getCurrentFile.statusText);
+            
             if (getCurrentFile.ok) {
                 const currentFileData = await getCurrentFile.json();
                 currentSha = currentFileData.sha;
+                console.log('Found existing file with SHA:', currentSha);
+            } else if (getCurrentFile.status === 404) {
+                console.log('File does not exist yet, will create new file');
+            } else {
+                // Log the error response for debugging
+                const errorText = await getCurrentFile.text();
+                console.error('Error getting current file:', getCurrentFile.status, errorText);
             }
         } catch (error) {
-            // File might not exist yet, which is fine for first creation
-            console.log('File does not exist yet, will create new file');
+            console.error('Exception getting current file:', error);
         }
 
         // Step 2: Prepare the new content
@@ -79,6 +103,8 @@ export default async function handler(req, res) {
             commitData.sha = currentSha;
         }
 
+        console.log('Commit data:', { ...commitData, content: '[base64 content]' });
+
         // Step 4: Commit the changes
         const commitResponse = await fetch(
             `${apiBase}/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/${filePath}`,
@@ -92,9 +118,23 @@ export default async function handler(req, res) {
             }
         );
 
+        console.log('Commit response:', commitResponse.status, commitResponse.statusText);
+
         if (!commitResponse.ok) {
             const errorData = await commitResponse.json();
-            throw new Error(`GitHub API error: ${commitResponse.status} - ${errorData.message}`);
+            console.error('GitHub API Error Details:', errorData);
+            
+            // More detailed error response
+            return res.status(500).json({
+                error: `GitHub API error: ${commitResponse.status} - ${errorData.message}`,
+                details: errorData,
+                debug: {
+                    url: `${apiBase}/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/${filePath}`,
+                    method: 'PUT',
+                    hasAuth: headers.Authorization ? 'Yes' : 'No',
+                    authType: headers.Authorization ? headers.Authorization.split(' ')[0] : 'None'
+                }
+            });
         }
 
         const result = await commitResponse.json();
@@ -117,7 +157,11 @@ export default async function handler(req, res) {
         console.error('Error updating JSON:', error);
         res.status(500).json({
             error: error.message || 'Internal server error',
-            details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
+            debug: {
+                errorName: error.name,
+                errorMessage: error.message
+            }
         });
     }
 }
