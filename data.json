@@ -2,8 +2,8 @@
   "products": [
     {
       "name": "Portable Laptop Stand",
-      "description": "lorem",
-      "price": "$39.99"
+      "description": "loremsdfdsfdsfs",
+      "price": "234"
     },
     {
       "name": "Product 1",
@@ -11,5 +11,5 @@
       "price": "335"
     }
   ],
-  "lastUpdated": "2025-09-04T20:25:02.505Z"
+  "lastUpdated": "2025-09-04T20:33:16.940Z"
 }
