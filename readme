@@ -97,8 +97,9 @@ const GITHUB_BRANCH = 'main';            // Update this
 
 1. Commit and push your changes to GitHub
 2. Vercel will automatically redeploy
-3. Visit your Vercel URL (e.g., `https://your-project.vercel.app`)
-4. Test the admin panel at `https://your-project.vercel.app/admin.html`
+3. **Main site**: Visit your Vercel URL (e.g., `https://your-project.vercel.app`)
+4. **Admin panel**: Go directly to `https://your-project.vercel.app/admin.html`
+5. Enter your admin password to access the management panel
 
 ## 🔧 How It Works
 

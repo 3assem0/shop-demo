@@ -567,7 +567,9 @@
         }
 
         // Load products when page loads
-        document.addEventListener('DOMContentLoaded', loadProducts);
+        document.addEventListener('DOMContentLoaded', function() {
+            checkSessionAuth(); // Check if already authenticated
+        });
     </script>
 </body>
 </html>
