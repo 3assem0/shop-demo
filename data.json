@@ -1,11 +1,6 @@
 {
   "products": [
     {
-      "name": "Wireless Bluetooth Headphones",
-      "description": "Premium quality wireless headphones with noise cancellation and 30-hour battery life. Perfect for music lovers and professionals.",
-      "price": "$99.99"
-    },
-    {
       "name": "Smart Fitness Watch",
       "description": "Track your health and fitness with GPS, heart rate monitoring, and waterproof design. Compatible with iOS and Android.",
       "price": "$199.99"
@@ -14,12 +9,7 @@
       "name": "Portable Laptop Stand",
       "description": "Ergonomic aluminum laptop stand that's lightweight and adjustable. Improve your posture while working from anywhere.",
       "price": "$39.99"
-    },
-    {
-      "name": "Assem Ayman",
-      "description": "",
-      "price": "250"
     }
   ],
-  "lastUpdated": "2025-09-04T19:14:20.910Z"
+  "lastUpdated": "2025-09-04T19:16:01.468Z"
 }
