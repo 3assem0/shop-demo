@@ -49,6 +49,7 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             margin-bottom: 30px;
+            display: none;
         }
 
         .form-section {
@@ -231,10 +232,11 @@
             background: rgba(255, 255, 255, 0.2);
             border-radius: 25px;
             transition: all 0.3s ease;
-            display: inline-flex;
+            display: none;
             align-items: center;
             gap: 8px;
             margin-bottom: 20px;
+            width: fit-content;
         }
 
         .back-link:hover {
@@ -250,6 +252,36 @@
             border-top: 3px solid #3498db;
             border-radius: 50%;
             animation: spin 1s linear infinite;
+        }
+
+        .access-denied {
+            background: rgba(231, 76, 60, 0.1);
+            border: 2px solid #e74c3c;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            color: #e74c3c;
+            margin-top: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        .access-denied h2 {
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+
+        .access-denied p {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .access-denied .format-hint {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            background: rgba(231, 76, 60, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
         }
 
         @keyframes spin {
@@ -284,9 +316,9 @@
             <p>Manage your products inventory</p>
         </div>
 
-        <a href="index.html" class="back-link">← Back to Store</a>
+        <a href="index.html" class="back-link" style="display: none;">← Back to Store</a>
 
-        <div class="admin-panel">
+        <div class="admin-panel" style="display: none;">
             <div class="form-section">
                 <h2>🆕 Add New Product</h2>
                 <form id="product-form">
@@ -566,9 +598,67 @@
             return text.replace(/[&<>"']/g, function(m) { return map[m]; });
         }
 
+        // Authentication functions
+        async function checkUrlAuth() {
+            // Get password from URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const password = urlParams.get('password');
+            
+            if (!password) {
+                showAccessDenied('Access denied. Password required in URL.');
+                return;
+            }
+            
+            try {
+                // Verify password with server
+                const response = await fetch('/api/verify-admin', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ password })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    // Authentication successful - load the admin panel
+                    showAdminPanel();
+                    loadProducts();
+                } else {
+                    showAccessDenied('Access denied. Invalid password.');
+                }
+                
+            } catch (error) {
+                console.error('Authentication error:', error);
+                showAccessDenied('Access denied. Authentication error.');
+            }
+        }
+
+        function showAdminPanel() {
+            // Show the admin panel content
+            document.querySelector('.admin-panel').style.display = 'block';
+            document.querySelector('.back-link').style.display = 'inline-flex';
+        }
+
+        function showAccessDenied(message) {
+            // Create and show access denied message
+            const container = document.querySelector('.container');
+            const accessDeniedDiv = document.createElement('div');
+            accessDeniedDiv.className = 'access-denied';
+            accessDeniedDiv.innerHTML = `
+                <h2>🚫 ${message}</h2>
+                <p>You need the correct password in the URL to access this panel.</p>
+                <div class="format-hint">
+                    Format: admin.html?password=yourpassword
+                </div>
+            `;
+            container.appendChild(accessDeniedDiv);
+        }
+
         // Load products when page loads
         document.addEventListener('DOMContentLoaded', function() {
-            checkSessionAuth(); // Check if already authenticated
+            checkUrlAuth(); // Check URL-based authentication
         });
     </script>
 </body>
